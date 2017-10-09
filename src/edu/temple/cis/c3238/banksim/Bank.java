@@ -39,7 +39,7 @@ public class Bank {
     }
     
     
-    
+    /*
     public void transfer(int from, int to, int amount) throws InterruptedException {
         accounts[from].waitForAvailableFunds(amount);
         synchronized(this) {
@@ -60,7 +60,8 @@ public class Bank {
             this.notifyAll();
         }
     }
-
+*/
+    
     public synchronized void test() throws InterruptedException {
         int sum = 0;
         
