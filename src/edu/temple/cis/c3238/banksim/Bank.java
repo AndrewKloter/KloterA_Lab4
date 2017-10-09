@@ -12,6 +12,7 @@ public class Bank {
     private final int initialBalance;
     private final int numAccounts;
     private boolean open;
+    
 
     public Bank(int numAccounts, int initialBalance) {
         open = true;
@@ -24,7 +25,7 @@ public class Bank {
         ntransacts = 0;
     }
 
-    public synchronized void transfer(int from, int to, int amount) {
+    public void transfer(int from, int to, int amount) {
         accounts[from].waitForAvailableFunds(amount);
         if (!open) return;
         if (accounts[from].withdraw(amount)) {
