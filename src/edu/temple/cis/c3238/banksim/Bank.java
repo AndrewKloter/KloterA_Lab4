@@ -38,16 +38,18 @@ public class Bank {
         transactsCounter--;
     }
     
-    
-   
+   //READ LOCK for transfer threads, allows them all to execute concurrently, but block the test method.
     public void transfer(int from, int to, int amount) throws InterruptedException {
         accounts[from].waitForAvailableFunds(amount);
+        /*
         synchronized(this) {
             while(testing) {
                 System.out.println("Can't transfer funds while testing!");
                 this.wait();
             }
         }
+        */
+        
         if (!open) return;
         if (accounts[from].withdraw(amount)) {
             incTransacts(); //We are withdrawing from an account, which is the beginning of a transaction.
@@ -60,23 +62,8 @@ public class Bank {
             this.notifyAll();
         }
     }
-
     
-    /*
-    public void transfer(int from, int to, int amount) throws InterruptedException {
-        accounts[from].waitForAvailableFunds(amount);
-     
-        if (!open) return;
-        if (accounts[from].withdraw(amount)) {
-            incTransacts(); //We are withdrawing from an account, which is the beginning of a transaction.
-            accounts[to].deposit(amount);
-            decTransacts(); //We are depositing to an account, which is the end of a transaction.
-        }
-        if (shouldTest()) test(); 
-    }
-*/    
-
-    //public synchronized void test() throws InterruptedException {
+//WRITE LOCK for test method, which will block all transfers. Write lock is exclusive, only 1.
     public synchronized void test() throws InterruptedException {
         int sum = 0;
         testing = true;
@@ -126,3 +113,17 @@ public class Bank {
     }
 
 }
+    
+    /*
+    public void transfer(int from, int to, int amount) throws InterruptedException {
+        accounts[from].waitForAvailableFunds(amount);
+     
+        if (!open) return;
+        if (accounts[from].withdraw(amount)) {
+            incTransacts(); //We are withdrawing from an account, which is the beginning of a transaction.
+            accounts[to].deposit(amount);
+            decTransacts(); //We are depositing to an account, which is the end of a transaction.
+        }
+        if (shouldTest()) test(); 
+    }
+*/
