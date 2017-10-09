@@ -39,7 +39,7 @@ public class Bank {
     }
     
     
-    /*
+   
     public void transfer(int from, int to, int amount) throws InterruptedException {
         accounts[from].waitForAvailableFunds(amount);
         synchronized(this) {
@@ -60,11 +60,25 @@ public class Bank {
             this.notifyAll();
         }
     }
-*/
+
     
+    /*
+    public void transfer(int from, int to, int amount) throws InterruptedException {
+        accounts[from].waitForAvailableFunds(amount);
+     
+        if (!open) return;
+        if (accounts[from].withdraw(amount)) {
+            incTransacts(); //We are withdrawing from an account, which is the beginning of a transaction.
+            accounts[to].deposit(amount);
+            decTransacts(); //We are depositing to an account, which is the end of a transaction.
+        }
+        if (shouldTest()) test(); 
+    }
+*/    
+
+    //public synchronized void test() throws InterruptedException {
     public synchronized void test() throws InterruptedException {
         int sum = 0;
-        
         testing = true;
         while(transactsCounter != 0) {
             System.out.println("Can't test until all transactions are finished!");
