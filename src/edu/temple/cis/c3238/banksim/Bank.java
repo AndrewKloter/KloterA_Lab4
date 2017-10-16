@@ -1,5 +1,9 @@
 package edu.temple.cis.c3238.banksim;
 
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
+
+
 /**
  * @author Cay Horstmann
  * @author Modified by Paul Wolfgang
@@ -15,6 +19,8 @@ public class Bank {
     private int transactsCounter;
     private boolean testing=false;
     
+    ReadWriteLock rwLock = new ReentrantReadWriteLock();
+
 
     public Bank(int numAccounts, int initialBalance) {
         open = true;
@@ -38,9 +44,13 @@ public class Bank {
         transactsCounter--;
     }
     
+    
    //READ LOCK for transfer threads, allows them all to execute concurrently, but block the test method.
     public void transfer(int from, int to, int amount) throws InterruptedException {
+        
+        
         accounts[from].waitForAvailableFunds(amount);
+        
         /*
         synchronized(this) {
             while(testing) {
@@ -50,27 +60,55 @@ public class Bank {
         }
         */
         
+        rwLock.readLock().lock();
+        try {
+            System.out.println("Inside the Read lock");
+        
+        
         if (!open) return;
         if (accounts[from].withdraw(amount)) {
             incTransacts(); //We are withdrawing from an account, which is the beginning of a transaction.
             accounts[to].deposit(amount);
             decTransacts(); //We are depositing to an account, which is the end of a transaction.
         }
+        
+        }
+        finally {
+            System.out.println("Right before READ Unlock");
+        rwLock.readLock().unlock();
+        }
+        
+        System.out.println("BEFORE SHOULDTEST");
         if (shouldTest()) test();
+        System.out.println("AFTER SHOULDTEST");
+
+        
         
         synchronized(this) {
             this.notifyAll();
         }
+        
+      
+        
     }
     
 //WRITE LOCK for test method, which will block all transfers. Write lock is exclusive, only 1.
     public synchronized void test() throws InterruptedException {
+        System.out.println("IN the TEST method");
+        
         int sum = 0;
         testing = true;
-        while(transactsCounter != 0) {
+        
+         while(transactsCounter != 0) {
             System.out.println("Can't test until all transactions are finished!");
             wait();
         }
+        
+        rwLock.writeLock().lock();
+        try {
+            System.out.println("Inside the WRITE lock");
+        
+        
         
         for (Account account : accounts) {
             System.out.printf("%s %s%n", 
@@ -87,8 +125,15 @@ public class Bank {
             System.out.println(Thread.currentThread().toString() + 
                     " The bank is in balance");
         }
+    
         testing = false;
         notifyAll();
+        
+        }
+    finally {
+            System.out.println("Right before the WRITE Unlock");
+        rwLock.writeLock().unlock();
+            }
     }
 
     public int size() {
