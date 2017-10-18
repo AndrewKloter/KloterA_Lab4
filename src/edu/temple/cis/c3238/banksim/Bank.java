@@ -51,6 +51,11 @@ public class Bank {
         
         accounts[from].waitForAvailableFunds(amount);
         
+           while(testing) {
+                System.out.println("Can't transfer funds while testing!");
+                this.wait();
+            }
+           
         /*
         synchronized(this) {
             while(testing) {
@@ -107,9 +112,8 @@ public class Bank {
         rwLock.writeLock().lock();
         try {
             System.out.println("Inside the WRITE lock");
-        
-        
-        
+
+            
         for (Account account : accounts) {
             System.out.printf("%s %s%n", 
                     Thread.currentThread().toString(), account.toString());
