@@ -86,13 +86,12 @@ public class Bank {
         System.out.println("BEFORE SHOULDTEST");
         if (shouldTest()) test();
         System.out.println("AFTER SHOULDTEST");
-
-        
         
         synchronized(this) {
             this.notifyAll();
         }
     }
+    
     
 //WRITE LOCK for test method, which will block all transfers. Write lock is exclusive, only 1.
     public synchronized void test() throws InterruptedException {
@@ -131,7 +130,7 @@ public class Bank {
                     " The bank is in balance");
         }
     
-        testing = false; //This singnifies that testing is finished. 
+        testing = false; //This signifies that testing is finished. 
         notifyAll();
         
         }

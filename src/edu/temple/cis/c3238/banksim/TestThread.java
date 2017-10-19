@@ -5,20 +5,22 @@
  */
 package edu.temple.cis.c3238.banksim;
 
-import java.util.concurrent.locks.ReadWriteLock;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
+//import java.util.concurrent.locks.ReadWriteLock;
+//import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
  *
  * @author tuf63516
  */
-class TestThread {
-
+class TestThread extends Thread {
     public Bank bank;
-
-    //@override
-    public void run() {
+    
+    public void TestThread() {
         
+    }
+
+    @Override
+    public void run() {
         try {
     bank.test();
     }
