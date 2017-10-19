@@ -48,9 +48,9 @@ public class Bank {
    //READ LOCK for transfer threads, allows them all to execute concurrently, but block the test method.
     public void transfer(int from, int to, int amount) throws InterruptedException {
         
-        
         accounts[from].waitForAvailableFunds(amount);
         
+            //This functions as a flag that each thread checks before it transfers.
            while(testing) {
                 System.out.println("Can't transfer funds while testing!");
                 this.wait();
@@ -92,9 +92,6 @@ public class Bank {
         synchronized(this) {
             this.notifyAll();
         }
-        
-      
-        
     }
     
 //WRITE LOCK for test method, which will block all transfers. Write lock is exclusive, only 1.
@@ -103,12 +100,16 @@ public class Bank {
         
         int sum = 0;
         testing = true;
+        System.out.println("Right after testing = true");
+        System.out.println("Transacts counter: " + transactsCounter);
+        
         
          while(transactsCounter != 0) {
             System.out.println("Can't test until all transactions are finished!");
             wait();
         }
         
+         System.out.println("RIGHT BEFORE writeLock().lock()");
         rwLock.writeLock().lock();
         try {
             System.out.println("Inside the WRITE lock");
@@ -130,7 +131,7 @@ public class Bank {
                     " The bank is in balance");
         }
     
-        testing = false;
+        testing = false; //This singnifies that testing is finished. 
         notifyAll();
         
         }
@@ -140,6 +141,7 @@ public class Bank {
             }
     }
 
+    
     public int size() {
         return accounts.length;
     }
