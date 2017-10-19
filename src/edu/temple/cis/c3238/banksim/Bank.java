@@ -95,7 +95,7 @@ public class Bank {
         System.out.println("BEFORE SHOULDTEST");
         //if (shouldTest()) test();
         testThread = new TestThread(this);
-        testThread.start();
+        if (shouldTest()) testThread.start();
         System.out.println("AFTER SHOULDTEST");
         
         synchronized(this) {
