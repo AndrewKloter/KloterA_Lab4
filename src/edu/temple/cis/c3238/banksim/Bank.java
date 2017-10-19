@@ -19,6 +19,8 @@ public class Bank {
     private int transactsCounter;
     private boolean testing=false;
     
+    private Object o;
+    
     ReadWriteLock rwLock = new ReentrantReadWriteLock();
 
 
@@ -32,16 +34,22 @@ public class Bank {
         }
         ntransacts = 0;
         transactsCounter = 0;
+        
+        o = new Object();
     }
 
     
-    public synchronized void incTransacts() {
-        transactsCounter++;
+    public void incTransacts() {
+        synchronized (o) {
+            transactsCounter++;
+        }
     }
     
     
-    public synchronized void decTransacts() {
-        transactsCounter--;
+    public void decTransacts() {
+        synchronized (o) {
+            transactsCounter--;            
+        }        
     }
     
     
@@ -83,8 +91,11 @@ public class Bank {
         rwLock.readLock().unlock();
         }
         
+        Thread testThread = new Thread();
         System.out.println("BEFORE SHOULDTEST");
-        if (shouldTest()) test();
+        //if (shouldTest()) test();
+        testThread = new TestThread(this);
+        testThread.start();
         System.out.println("AFTER SHOULDTEST");
         
         synchronized(this) {

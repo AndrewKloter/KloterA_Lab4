@@ -13,16 +13,18 @@ package edu.temple.cis.c3238.banksim;
  * @author tuf63516
  */
 class TestThread extends Thread {
-    public Bank bank;
+    //public Bank bank;
+    private final Bank bank;
+    private final Bank b;
     
-    public void TestThread() {
-        
+    public TestThread(Bank bank) {
+        b=bank;
     }
 
     @Override
     public void run() {
         try {
-    bank.test();
+    bank.test(b);
     }
     catch (InterruptedException ex) {
     }
