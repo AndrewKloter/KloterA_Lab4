@@ -75,7 +75,7 @@ public class Bank {
         
         rwLock.readLock().lock();
         try {
-            System.out.println("Inside the Read lock");
+            //System.out.println("Inside the Read lock");
         
         
         if (!open) return;
@@ -87,16 +87,16 @@ public class Bank {
         
         }
         finally {
-            System.out.println("Right before READ Unlock");
+            //System.out.println("Right before READ Unlock");
         rwLock.readLock().unlock();
         }
         
         Thread testThread = new Thread();
-        System.out.println("BEFORE SHOULDTEST");
+        //System.out.println("BEFORE SHOULDTEST");
         //if (shouldTest()) test();
         testThread = new TestThread(this);
         if (shouldTest()) testThread.start();
-        System.out.println("AFTER SHOULDTEST");
+        //System.out.println("AFTER SHOULDTEST");
         
         synchronized(this) {
             this.notifyAll();
@@ -106,12 +106,12 @@ public class Bank {
     
 //WRITE LOCK for test method, which will block all transfers. Write lock is exclusive, only 1.
     public synchronized void test() throws InterruptedException {
-        System.out.println("IN the TEST method");
+        //System.out.println("IN the TEST method");
         
         int sum = 0;
         testing = true;
-        System.out.println("Right after testing = true");
-        System.out.println("Transacts counter: " + transactsCounter);
+        //System.out.println("Right after testing = true");
+       // System.out.println("Transacts counter: " + transactsCounter);
         
         
          while(transactsCounter != 0) {
@@ -119,10 +119,10 @@ public class Bank {
             wait();
         }
         
-         System.out.println("RIGHT BEFORE writeLock().lock()");
+        // System.out.println("RIGHT BEFORE writeLock().lock()");
         rwLock.writeLock().lock();
         try {
-            System.out.println("Inside the WRITE lock");
+        //    System.out.println("Inside the WRITE lock");
 
             
         for (Account account : accounts) {
@@ -146,7 +146,7 @@ public class Bank {
         
         }
     finally {
-            System.out.println("Right before the WRITE Unlock");
+            //System.out.println("Right before the WRITE Unlock");
         rwLock.writeLock().unlock();
             }
     }

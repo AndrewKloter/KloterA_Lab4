@@ -7,7 +7,7 @@ package edu.temple.cis.c3238.banksim;
 public class BankSimMain {
 
     public static final int NACCOUNTS = 10;
-    public static final int INITIAL_BALANCE = 10000;
+    public static final int INITIAL_BALANCE = 20000;
 
     public static void main(String[] args) throws InterruptedException {
         Bank b = new Bank(NACCOUNTS, INITIAL_BALANCE);
