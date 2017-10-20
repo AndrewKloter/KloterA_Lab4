@@ -59,19 +59,12 @@ public class Bank {
         accounts[from].waitForAvailableFunds(amount);
         
             //This functions as a flag that each thread checks before it transfers.
-           while(testing) {
-                System.out.println("Can't transfer funds while testing!");
-                this.wait();
-            }
-           
-        /*
-        synchronized(this) {
+           synchronized(this) {  //Added synchronized block here to take fix the IllegalMonitorStateException that was being thrown. 
             while(testing) {
                 System.out.println("Can't transfer funds while testing!");
                 this.wait();
             }
-        }
-        */
+           }
         
         rwLock.readLock().lock();
         try {
@@ -93,7 +86,7 @@ public class Bank {
         
         Thread testThread = new Thread();
         //System.out.println("BEFORE SHOULDTEST");
-        //if (shouldTest()) test();
+        if (shouldTest()) test();
         testThread = new TestThread(this);
         if (shouldTest()) testThread.start();
         //System.out.println("AFTER SHOULDTEST");
@@ -111,7 +104,7 @@ public class Bank {
         int sum = 0;
         testing = true;
         //System.out.println("Right after testing = true");
-       // System.out.println("Transacts counter: " + transactsCounter);
+        //System.out.println("Transacts counter: " + transactsCounter);
         
         
          while(transactsCounter != 0) {
@@ -119,10 +112,10 @@ public class Bank {
             wait();
         }
         
-        // System.out.println("RIGHT BEFORE writeLock().lock()");
+        //System.out.println("RIGHT BEFORE writeLock().lock()");
         rwLock.writeLock().lock();
         try {
-        //    System.out.println("Inside the WRITE lock");
+            //System.out.println("Inside the WRITE lock");
 
             
         for (Account account : accounts) {
@@ -175,16 +168,4 @@ public class Bank {
 
 }
     
-    /*
-    public void transfer(int from, int to, int amount) throws InterruptedException {
-        accounts[from].waitForAvailableFunds(amount);
-     
-        if (!open) return;
-        if (accounts[from].withdraw(amount)) {
-            incTransacts(); //We are withdrawing from an account, which is the beginning of a transaction.
-            accounts[to].deposit(amount);
-            decTransacts(); //We are depositing to an account, which is the end of a transaction.
-        }
-        if (shouldTest()) test(); 
-    }
-*/
+ 
